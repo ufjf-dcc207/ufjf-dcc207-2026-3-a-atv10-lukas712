@@ -1,5 +1,4 @@
-import { version } from 'react';
-import './Bottle.css'
+import './Bottle.css';
 
 const COLORS = new Map<number, string>([
     [0, "red"],
@@ -9,32 +8,22 @@ const COLORS = new Map<number, string>([
 ]);
 
 export type BottleType = {
-    vecFill: Array<number>;
+    vecFill: number[];
     maxSize: number;
-}
+};
 
-export type BottleProps = {
+type BottleProps = {
     bottle: BottleType;
-}
+};
 
-export default function Bottle({bottle}: BottleProps){
-    function transferLiquid(bottleReceiver : BottleType): void{
-        if(ableToTransfer(bottleReceiver)){
-            let color = bottle.vecFill.pop();
-            bottleReceiver.vecFill.push(color);
-        }
-    }
-    
-    function ableToTransfer(bottleReceiver: BottleType): boolean{
-        if(bottle.vecFill.length > 0){
-            if(bottleReceiver.vecFill.length < bottleReceiver.maxSize){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    return (<div>
-        <span>{bottle.vecFill}</span>
-    </div>)
+export default function Bottle({ bottle }: BottleProps) {
+    return (
+        <div className="bottle">
+            {bottle.vecFill.map((color, index) => (
+                <span key={index} style={{ color: COLORS.get(color) }}>
+                    {color}
+                </span>
+            ))}
+        </div>
+    );
 }
