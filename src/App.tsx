@@ -1,68 +1,37 @@
-import { useState } from 'react';
-import './App.css';
+import { useState } from 'react'
+import './App.css'
+import Bottle, { type BottleType } from './Bottle'
+import { transferLiquid } from './Logic'
 
-import Bottle, { type BottleType } from './Bottle';
-
-const initialBottles: BottleType[] = [
-  { vecFill: [0, 1, 2], maxSize: 4 },
-  { vecFill: [1, 2], maxSize: 3 },
-  { vecFill: [3, 3, 0], maxSize: 5 },
-  { vecFill: [], maxSize: 4 },
-];
-
-
+const bottles: BottleType[] = [
+  {vecFill: [0, 1], maxSize: 4}, 
+  {vecFill: [1, 0], maxSize: 4},
+  {vecFill: [1,1,0], maxSize: 4},
+  {vecFill: [], maxSize: 4}
+]
 
 function App() {
-  const [selectedBottle, setSelectedBottle] = useState<number | null>(null);
-  const [bottles, setBottles] = useState<BottleType[]>(initialBottles);
-
-  function ableToTransfer(origin: BottleType, destination: BottleType): boolean {
-    if (origin.vecFill.length === 0) return false;
-    if (destination.vecFill.length >= destination.maxSize) return false;
-
-    return destination.vecFill.length === 0 ||
-      origin.vecFill[origin.vecFill.length - 1] ===
-      destination.vecFill[destination.vecFill.length - 1];
-  }
-
-  function transferLiquid(origin: number, destination: number): void {
-    setBottles(atual => {
-      const newBottles = atual.map(b => ({
-        ...b,
-        vecFill: [...b.vecFill]
-      }));
-
-      if (ableToTransfer(newBottles[origin], newBottles[destination])) {
-        const color = newBottles[origin].vecFill.pop()!;
-        newBottles[destination].vecFill.push(color);
-      }
-
-      return newBottles;
-    });
-  }
-
-  function selectBottle(index: number): void {
-    if (selectedBottle === null) {
-      setSelectedBottle(index);
-    } else {
-      transferLiquid(selectedBottle, index);
-      setSelectedBottle(null);
+  const [bottle, setBottles] = useState<BottleType[]>(bottles);
+  const [selected, setSelected] = useState<number | null>(null);
+  
+  function bottleSelected(index: number) {
+    if(selected === null){
+        setSelected(index);
+    }
+    else {
+      const newBottles = transferLiquid(bottle, selected, index);  
+      setBottles(newBottles);
+      setSelected(null);
     }
   }
 
-  return (
-    <div className="app">
-      {bottles.map((bottle, index) => (
-        <div key={index}>
-          <Bottle bottle={bottle} />
-
-          <button onClick={() => selectBottle(index)}>
-            {selectedBottle === index ? "Selecionada" : "Selecionar"}
-          </button>
-        </div>
-      ))}
-    </div>
-  );
+  const bottleElements = [];
+  for (let i = 0; i < bottle.length; i++) {
+    bottleElements.push(<Bottle key={i} index={i} bottle={bottle[i]} selected={selected ===i} onClick={bottleSelected}></Bottle>);
+  }
+  return (<div>
+    {bottleElements}
+  </div>)
 }
 
-export default App;
+export default App

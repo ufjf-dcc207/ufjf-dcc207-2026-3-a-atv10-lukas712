@@ -1,4 +1,4 @@
-import './Bottle.css';
+import './Bottle.css'
 
 const COLORS = new Map<number, string>([
     [0, "red"],
@@ -8,22 +8,29 @@ const COLORS = new Map<number, string>([
 ]);
 
 export type BottleType = {
-    vecFill: number[];
+    vecFill: Array<number>;
     maxSize: number;
-};
+}
 
-type BottleProps = {
+export type BottleProps = {
     bottle: BottleType;
-};
+    index: number;
+    selected: boolean;
+    onClick: (index: number) => void;
+}
 
-export default function Bottle({ bottle }: BottleProps) {
-    return (
-        <div className="bottle">
-            {bottle.vecFill.map((color, index) => (
-                <span key={index} style={{ color: COLORS.get(color) }}>
-                    {color}
-                </span>
-            ))}
-        </div>
-    );
+export default function Bottle({bottle, index, selected, onClick}: BottleProps){    
+    let buttonText = "Selecionar";
+    
+    function bottleClick() {
+        onClick(index);
+    }
+    if(selected){
+        buttonText = "Selecionado";
+    }
+    
+    return (<div onClick={bottleClick} className={selected ? "selected" : ""}>
+        <span>{bottle.vecFill.join(" ")}</span>
+        <button>{buttonText}</button>
+    </div>)
 }
